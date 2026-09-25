@@ -238,6 +238,80 @@ input:focus {
 	background: #1b5d3b;
 }
 
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 14px;
+}
+
+th,
+td {
+	padding: 12px 8px;
+	border-bottom: 1px solid #dddddd;
+	text-align: left;
+}
+
+th {
+	font-weight: bold;
+}
+
+.boton-ver,
+.boton-volver,
+.acciones-pedido button {
+	padding: 8px 12px;
+	border: 1px solid #aaaaaa;
+	border-radius: 4px;
+	background: #f5f5f5;
+	cursor: pointer;
+	font-size: 13px;
+}
+
+.boton-ver:hover,
+.boton-volver:hover,
+.acciones-pedido button:hover {
+	color: white;
+	border-color: #24734a;
+	background: #24734a;
+}
+
+.carrito h2 {
+	margin: 24px 0 12px;
+	font-size: 20px;
+}
+
+.carrito input[type="number"] {
+	width: 75px;
+	height: 34px;
+}
+
+.boton-volver {
+	margin-top: 24px;
+}
+
+.acciones-pedido {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-top: 20px;
+}
+
+.acciones-pedido button:first-child,
+.acciones-pedido button:nth-child(2) {
+	color: white;
+	border-color: #24734a;
+	background: #24734a;
+}
+
+@media (max-width: 600px) {
+	.carrito {
+		overflow-x: auto;
+	}
+
+	.carrito table {
+		min-width: 540px;
+	}
+}
+
 @media (max-width: 600px) {
 	.productos {
 		padding: 20px;
