@@ -5,6 +5,7 @@ const botonEntrar = document.querySelector("#boton-entrar");
 const mensaje = document.querySelector("#mensaje");
 const tarjetaLogin = document.querySelector(".tarjeta");
 const seccionProductos = document.querySelector("#seccion-productos");
+const nombreUsuario = document.querySelector("#nombre-usuario");
 const listaProductos = document.querySelector("#lista-productos");
 const listaCategorias = document.querySelector("#lista-categorias");
 const textoBusqueda = document.querySelector("#texto-busqueda");
@@ -21,8 +22,10 @@ const mensajeCarrito = document.querySelector("#mensaje-carrito");
 let productos = [];
 let pedido = [];
 let carritos = [];
+let carritosSesion = [];
 let carritoSesion = null;
 let carritoSeleccionado = null;
+let usuarioActual = "";
 
 botonMostrar.addEventListener("click", mostrarContrasena);
 formulario.addEventListener("submit", iniciarSesion);
@@ -64,6 +67,8 @@ async function iniciarSesion(evento) {
 		}
 
 		sessionStorage.setItem("tokenShopOnline", resultado.token);
+		usuarioActual = usuario;
+		nombreUsuario.textContent = usuarioActual;
 		mostrarProductos();
 	} catch (error) {
 		mostrarMensaje("No se pudo iniciar sesion. Intente nuevamente.", "error");
@@ -167,6 +172,12 @@ async function agregarAlPedido(producto, boton) {
 		if (!respuesta.ok) throw new Error("No se pudo guardar el carrito.");
 		const respuestaCarrito = await respuesta.json();
 		carritoSesion = { ...respuestaCarrito, ...datosCarrito };
+		const posicion = carritosSesion.findIndex((carrito) => carrito.id === carritoSesion.id);
+		if (posicion === -1) {
+			carritosSesion.push(carritoSesion);
+		} else {
+			carritosSesion[posicion] = carritoSesion;
+		}
 		mostrarMensajeProducto("Producto agregado al carrito.", "exito");
 	} catch (error) {
 		mostrarMensajeProducto("No se pudo crear el carrito.", "error");
@@ -191,7 +202,7 @@ async function mostrarCarritos() {
 		const respuesta = await fetch("https://fakestoreapi.com/carts/user/2");
 		const datos = await respuesta.json();
 		const carritosApi = Array.isArray(datos) ? datos : [datos];
-		carritos = carritoSesion ? [...carritosApi, carritoSesion] : carritosApi;
+		carritos = [...carritosApi, ...carritosSesion];
 		mostrarTablaCarritos();
 	} catch (error) {
 		tablaCarritos.innerHTML = "<tr><td colspan='3'>No se pudieron cargar los pedidos.</td></tr>";
@@ -280,13 +291,22 @@ document.querySelector("#boton-carrito").addEventListener("click", () => {
 	mostrarCarritos();
 });
 
+document.querySelector("#nuevo-carrito").addEventListener("click", () => {
+	carritoSesion = null;
+	pedido = [];
+	cantidadCarrito.textContent = "0";
+	mostrarMensajeProducto("Nuevo carrito listo.", "exito");
+});
+
 function salirDeLaCuenta() {
 	sessionStorage.removeItem("tokenShopOnline");
 	seccionProductos.hidden = true;
 	seccionCarrito.hidden = true;
 	tarjetaLogin.hidden = false;
 	pedido = [];
+	carritosSesion = [];
 	carritoSesion = null;
+	usuarioActual = "";
 	cantidadCarrito.textContent = "0";
 }
 

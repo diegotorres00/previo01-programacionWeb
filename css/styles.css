@@ -151,6 +151,12 @@ input:focus {
 	text-align: left;
 }
 
+.bienvenida {
+	margin: 8px 0 0;
+	color: #24734a;
+	font-size: 14px;
+}
+
 .acciones,
 .buscador,
 .categorias {
