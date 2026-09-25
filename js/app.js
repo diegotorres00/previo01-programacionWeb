@@ -21,6 +21,7 @@ const mensajeCarrito = document.querySelector("#mensaje-carrito");
 let productos = [];
 let pedido = [];
 let carritos = [];
+let carritosSesion = [];
 let carritoSeleccionado = null;
 
 botonMostrar.addEventListener("click", mostrarContrasena);
@@ -118,7 +119,7 @@ function mostrarListaProductos(lista) {
 			<p class="precio">$${producto.price.toFixed(2)}</p>
 			<button class="boton-agregar" type="button">Agregar</button>
 		`;
-		tarjeta.querySelector(".boton-agregar").addEventListener("click", () => agregarAlPedido(producto));
+		tarjeta.querySelector(".boton-agregar").addEventListener("click", (evento) => agregarAlPedido(producto, evento.target));
 		listaProductos.appendChild(tarjeta);
 	});
 }
@@ -136,10 +137,39 @@ function buscarProductos() {
 	mostrarListaProductos(resultado);
 }
 
-function agregarAlPedido(producto) {
-	pedido.push(producto);
-	cantidadCarrito.textContent = pedido.length;
-	mostrarMensajeProducto("Producto agregado al pedido.", "exito");
+async function agregarAlPedido(producto, boton) {
+	boton.disabled = true;
+	const productoPedido = pedido.find((item) => item.productId === producto.id);
+
+	if (productoPedido) {
+		productoPedido.quantity += 1;
+	} else {
+		pedido.push({ productId: producto.id, quantity: 1 });
+	}
+
+	cantidadCarrito.textContent = pedido.reduce((total, item) => total + item.quantity, 0);
+
+	try {
+		const respuesta = await fetch("https://fakestoreapi.com/carts", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				userId: 2,
+				date: new Date().toISOString(),
+				products: pedido.map((item) => ({ ...item }))
+			})
+		});
+
+		if (!respuesta.ok) throw new Error("No se pudo crear el carrito.");
+		const nuevoCarrito = await respuesta.json();
+		nuevoCarrito.products = pedido.map((item) => ({ ...item }));
+		carritosSesion.push(nuevoCarrito);
+		mostrarMensajeProducto("Carrito creado con el producto agregado.", "exito");
+	} catch (error) {
+		mostrarMensajeProducto("No se pudo crear el carrito.", "error");
+	} finally {
+		boton.disabled = false;
+	}
 }
 
 function mostrarMensajeProducto(texto, tipo) {
@@ -157,7 +187,8 @@ async function mostrarCarritos() {
 	try {
 		const respuesta = await fetch("https://fakestoreapi.com/carts/user/2");
 		const datos = await respuesta.json();
-		carritos = Array.isArray(datos) ? datos : [datos];
+		const carritosApi = Array.isArray(datos) ? datos : [datos];
+		carritos = [...carritosApi, ...carritosSesion];
 		mostrarTablaCarritos();
 	} catch (error) {
 		tablaCarritos.innerHTML = "<tr><td colspan='3'>No se pudieron cargar los pedidos.</td></tr>";
@@ -252,6 +283,7 @@ function salirDeLaCuenta() {
 	seccionCarrito.hidden = true;
 	tarjetaLogin.hidden = false;
 	pedido = [];
+	carritosSesion = [];
 	cantidadCarrito.textContent = "0";
 }
 
