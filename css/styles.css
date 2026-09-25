@@ -124,6 +124,139 @@ input:focus {
 	text-align: center;
 }
 
+.productos {
+	width: 100%;
+	max-width: 1050px;
+	padding: 28px;
+	border: 1px solid #d5d5d5;
+	border-radius: 6px;
+	background: white;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+}
+
+.encabezado-productos {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	border-bottom: 1px solid #dddddd;
+}
+
+.encabezado-productos h1 {
+	text-align: left;
+}
+
+.encabezado-productos .subtitulo {
+	margin-bottom: 20px;
+	text-align: left;
+}
+
+.acciones,
+.buscador,
+.categorias {
+	display: flex;
+	gap: 8px;
+}
+
+.acciones button,
+.buscador button,
+.categorias button {
+	padding: 9px 12px;
+	border: 1px solid #bbbbbb;
+	border-radius: 4px;
+	background: #f5f5f5;
+	cursor: pointer;
+	font-size: 13px;
+}
+
+.acciones button:hover,
+.buscador button:hover,
+.categorias button:hover,
+.categorias .seleccionada {
+	color: white;
+	border-color: #24734a;
+	background: #24734a;
+}
+
+.buscador {
+	margin: 24px 0 12px;
+}
+
+.buscador input {
+	max-width: 350px;
+}
+
+.categorias {
+	flex-wrap: wrap;
+	margin-bottom: 8px;
+}
+
+.lista-productos {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+	gap: 16px;
+}
+
+.producto {
+	display: flex;
+	min-height: 340px;
+	flex-direction: column;
+	padding: 14px;
+	border: 1px solid #dddddd;
+	border-radius: 4px;
+}
+
+.producto img {
+	width: 100%;
+	height: 160px;
+	object-fit: contain;
+}
+
+.producto h2 {
+	margin: 12px 0 8px;
+	font-size: 15px;
+}
+
+.producto .precio {
+	margin: 0 0 12px;
+	color: #24734a;
+	font-weight: bold;
+}
+
+.boton-agregar {
+	width: 100%;
+	margin-top: auto;
+	padding: 9px;
+	border: 0;
+	border-radius: 4px;
+	color: white;
+	background: #24734a;
+	cursor: pointer;
+}
+
+.boton-agregar:hover {
+	background: #1b5d3b;
+}
+
+@media (max-width: 600px) {
+	.productos {
+		padding: 20px;
+	}
+
+	.encabezado-productos {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	.acciones {
+		margin-bottom: 18px;
+	}
+
+	.buscador input {
+		max-width: none;
+	}
+}
+
 @media (max-width: 450px) {
 	.tarjeta {
 		padding: 25px 20px;

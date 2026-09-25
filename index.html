@@ -28,6 +28,27 @@
 
 			<p class="nota">Proyecto de Programacion Web - UFPS</p>
 		</section>
+
+		<section class="productos" id="seccion-productos" hidden>
+			<header class="encabezado-productos">
+				<div>
+					<h1>Shop Online</h1>
+					<p class="subtitulo">Lista de productos</p>
+				</div>
+				<div class="acciones">
+					<button id="boton-carrito" type="button">Carrito (<span id="cantidad-carrito">0</span>)</button>
+					<button id="boton-salir" type="button">Salir</button>
+				</div>
+			</header>
+
+			<div class="buscador">
+				<input id="texto-busqueda" type="search" placeholder="Buscar producto..." aria-label="Buscar producto">
+				<button id="boton-buscar" type="button">Buscar</button>
+			</div>
+			<nav class="categorias" id="lista-categorias" aria-label="Categorias de productos"></nav>
+			<p id="mensaje-productos" class="mensaje" role="status" aria-live="polite"></p>
+			<div class="lista-productos" id="lista-productos"></div>
+		</section>
 	</main>
 	<script src="js/app.js"></script>
 </body>
