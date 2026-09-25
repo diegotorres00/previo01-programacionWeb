@@ -21,7 +21,7 @@ const mensajeCarrito = document.querySelector("#mensaje-carrito");
 let productos = [];
 let pedido = [];
 let carritos = [];
-let carritosSesion = [];
+let carritoSesion = null;
 let carritoSeleccionado = null;
 
 botonMostrar.addEventListener("click", mostrarContrasena);
@@ -150,21 +150,24 @@ async function agregarAlPedido(producto, boton) {
 	cantidadCarrito.textContent = pedido.reduce((total, item) => total + item.quantity, 0);
 
 	try {
-		const respuesta = await fetch("https://fakestoreapi.com/carts", {
-			method: "POST",
+		const datosCarrito = {
+			userId: 2,
+			date: carritoSesion ? carritoSesion.date : new Date().toISOString(),
+			products: pedido.map((item) => ({ ...item }))
+		};
+		const url = carritoSesion
+			? "https://fakestoreapi.com/carts/" + carritoSesion.id
+			: "https://fakestoreapi.com/carts";
+		const respuesta = await fetch(url, {
+			method: carritoSesion ? "PUT" : "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				userId: 2,
-				date: new Date().toISOString(),
-				products: pedido.map((item) => ({ ...item }))
-			})
+			body: JSON.stringify(datosCarrito)
 		});
 
-		if (!respuesta.ok) throw new Error("No se pudo crear el carrito.");
-		const nuevoCarrito = await respuesta.json();
-		nuevoCarrito.products = pedido.map((item) => ({ ...item }));
-		carritosSesion.push(nuevoCarrito);
-		mostrarMensajeProducto("Carrito creado con el producto agregado.", "exito");
+		if (!respuesta.ok) throw new Error("No se pudo guardar el carrito.");
+		const respuestaCarrito = await respuesta.json();
+		carritoSesion = { ...respuestaCarrito, ...datosCarrito };
+		mostrarMensajeProducto("Producto agregado al carrito.", "exito");
 	} catch (error) {
 		mostrarMensajeProducto("No se pudo crear el carrito.", "error");
 	} finally {
@@ -188,7 +191,7 @@ async function mostrarCarritos() {
 		const respuesta = await fetch("https://fakestoreapi.com/carts/user/2");
 		const datos = await respuesta.json();
 		const carritosApi = Array.isArray(datos) ? datos : [datos];
-		carritos = [...carritosApi, ...carritosSesion];
+		carritos = carritoSesion ? [...carritosApi, carritoSesion] : carritosApi;
 		mostrarTablaCarritos();
 	} catch (error) {
 		tablaCarritos.innerHTML = "<tr><td colspan='3'>No se pudieron cargar los pedidos.</td></tr>";
@@ -283,7 +286,7 @@ function salirDeLaCuenta() {
 	seccionCarrito.hidden = true;
 	tarjetaLogin.hidden = false;
 	pedido = [];
-	carritosSesion = [];
+	carritoSesion = null;
 	cantidadCarrito.textContent = "0";
 }
 
